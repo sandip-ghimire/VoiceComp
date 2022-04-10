@@ -14,7 +14,7 @@ Admins can configure the experiments by logging in through the interface.
 A short instructions for participants to proceed the experiment.
 
 #####  Decision Option
-Configure the options to be presented for the particiants along with the points/score awarded for each option.
+Configure the options to be presented for the participants along with the points/score awarded for each decision.
 
 #####  Audio files
 Set up a list of audio files along with options such as randomize the order or set a sequence.
@@ -40,7 +40,8 @@ Change these settings in settings.py file when required.
 4. Install requirements.
 > pip install -r requirements.txt
 5. Migrate database.
-> python manage.py makemigrations menu
+> python manage.py makemigrations menu <br />
+> python manage.py migrate <br />
 > python manage.py migrate menu
 
 6. Collect static files.
