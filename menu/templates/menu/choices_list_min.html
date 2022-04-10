@@ -1,0 +1,362 @@
+{% load static %}
+{% load replaceht %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Voice Compare</title>
+	<!-- jquery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- Popper -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	 crossorigin="anonymous">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	 crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+	 crossorigin="anonymous">
+
+	<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+	<link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.2" media="screen">
+
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-sm {{theme.navbar}} {{theme.bg}}">
+		<a class="navbar-brand" href="#"><b><span style="color: {{theme.theme_color}};weight:bold">&nbsp;Voice</span></b>Comp</a>
+
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+		 aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav ml-auto">
+
+				{% if user.is_authenticated and user.is_staff %}
+				<li class="nav-item settingsdiv">
+					<a class='nav-link dropdown-item btn btn-settings {{theme.button}} btn-lg' role='button' href='#settingModal'
+					 data-toggle="modal"><i class="fas fa-cog"></i> Settings</a>
+				</li>
+				{% endif %}
+
+
+				<li class='nav-item dropdown themediv' theme='dark'>
+					{% if isGamified == 'true' %}
+
+					<a class='nav-link dropdown-item dropdown-toggle btn {{theme.button}} btn-lg' href='#' id='theme_menu' role='button' data-toggle='dropdown'
+					 aria-haspopup='true' aria-expanded='false'>
+						<i class="fas fa-puzzle-piece"></i> Themes
+					</a>
+					<div class='dropdown-menu dropdown-menu-right {{theme.bg}}' aria-labelledby='theme_menu'>
+						<a class='dropdown-item lighttheme btn {{theme.button}}' role='button'>light</a>
+						<a class='dropdown-item darktheme btn {{theme.button}}' role='button'>dark</a>
+					</div>
+					{% endif %}
+				</li>
+
+
+
+				<li class='nav-item dropdown userdiv'>
+					{% if user.is_authenticated and user.is_staff %}
+
+					<a class='nav-link dropdown-toggle btn btn-user {{theme.button}} btn-lg' href='#' id='user_loggedin' role='button'
+					 data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+						<i class="fas fa-user"></i> {{user.username}}
+					</a>
+
+					<div class='dropdown-menu dropdown-menu-right {{theme.bg}}' aria-labelledby='user_loggedin'>
+						<a class='dropdown-item mturkverification btn {{theme.button}}' role='button' href='#workerVerifyModal' data-toggle="modal"><i class="fas fa-check"></i>
+							verify worker</a>
+						<a class='dropdown-item logout btn {{theme.button}}' role='button' href='{% url "logout" %}'><i class="fas fa-sign-out-alt"></i>
+							logout</a>
+					</div>
+					{% else %}
+					<a class="nav-link dropdown-item btn {{theme.button}} btn-lg" href="#loginModal" role='button' data-toggle="modal"><i
+						 class="fas fa-sign-in-alt"></i>
+						Login</a>
+					{% endif %}
+
+				</li>
+
+				<li class="nav-item exitdiv">
+					<a class='nav-link dropdown-item btn btn-exit {{theme.button}} btn-lg' role='button' href='#'
+					 data-toggle="modal"><i style="color:red" class="fas fa-power-off"></i> Get Token/ Quit</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<div class="loader">
+		<span class='loadingIcon'>
+			<h6>Loading...</h6>
+			<!-- <i class="fas fa-snowflake fa-spin fa-3x fa-fw"></i> -->
+			<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i>
+		</span>
+
+	</div>
+
+	<div class="loader2">
+		<span class='loading2Icon'>
+			<h6><i class="fas fa-spinner fa-pulse"></i>  Loading...</h6>
+		</span>
+
+	</div>
+
+
+	<div class="contentWrapper container-fluid">
+		<div class="container">
+
+
+			<div class="row">
+				<div class="col-10 instructionsdiv ">
+					<div class="row instructionrow">
+						<!-- <div class="col-10"> -->
+							{% if 'h_start' in instructions.instruction_text %}
+								<h5>{{ instructions.instruction_text|replaceht }}</h5>
+							{% else %}
+								<h5>{{ instructions.instruction_text }}</h5>
+							{% endif %}
+
+
+						<!-- </div> -->
+							{% if instructions.instruction_image %}
+								<!-- <div class="col-2"> -->
+								&nbsp;&nbsp;<img class="float-right instructionImage" src='{{instructions.instruction_image.url}}'></img>
+								<!-- </div> -->
+							{% endif %}
+
+					</div>
+
+
+				</div> <!-- instructiondiv -->
+
+				{% if isGamified == 'true' %}
+				<div class="col-2 scorediv">
+					<div class="scorepannel">
+						<div class="scoreheader row">
+							<h6 class="scoreheadertxt">SCORE</h6>
+
+						</div>
+						<div class="scorebody row">
+							<h5 class="scoretxt">0</h5>
+						</div>
+
+						{% if enableLife == 'true' %}
+						<div class="life">
+							{% for life in lifelist %}
+							<i class="fas fa-heart" id="life{{life}}"></i>&nbsp;
+							{% endfor %}
+
+							{% for fail in faillist %}
+							<i class="fas fa-heart-broken" id="fail{{fail}}"></i>&nbsp;
+							{% endfor %}
+						</div>
+						{% endif %}
+
+					</div>
+
+
+				</div> <!--scoredivend-->
+				{% endif %}
+
+			</div>
+
+		</div>
+
+		<div class="container menubar">
+			<div class="row">
+				<div class="col-4">
+					<div class="levelwrap">
+						{% if isGamified == 'true' %}
+						<h5>
+							<span class="levelspan">Level:<span class="level">1</span></span>
+							<span class="decospanleft"></span>
+						</h5>
+						{% endif %}
+					</div>
+
+				</div>
+
+				<div class="col-4">
+					<h5><span class="countertxt"></span></h5>
+				</div>
+
+				<div class="col-4">
+					{% if user.is_authenticated and user.is_staff %}
+						<div class="settingwrap">
+							<h5>
+
+								<!--<span class="settingspan"><i class="fas fa-cog"></i></span>-->
+								<span class="settingspan resetgame"><a data-toggle="tooltip" data-placement="top" title="Restart game"><i class="fas fa-sync-alt"></i></a></span>
+
+							</h5>
+						</div>
+					{% endif %}
+
+				</div>
+			</div>
+		</div>
+		<div class="container audioblock">
+			<div class="row">
+				<div class="leftblock col-6">
+
+					<div class="audio-player" id="audio-player1">
+						<div id="audio-info">
+
+							<span class="title">Audio</span>
+							<!-- <span class="artist"></span> - <span class="title"></span> -->
+						</div>
+
+						<div class="tracker">
+
+							<div class="progressBar">
+								<span id="progress1" class="progress"></span>
+							</div>
+							<span class="duration" id="duration1">0.00</span>
+						</div>
+						<div class="clearfix"></div>
+						<ul id="playlist1" class="hidden playlist" hidden>
+							<li song="" cover="cover1.jpg" artist="1">Audio 1</li>
+						</ul>
+
+						<div id="buttons">
+							<span>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg play" id="play1"><i class="fas fa-play"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg buffer" id="buffer1" style="display:none" disabled><i class="fa fa-spinner fa-spin"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg pause" id="pause1" style="display:none"><i class="fas fa-pause"></i></button>
+							</span>
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="rightblock col-6">
+					<div class="audio-player" id="audio-player2">
+						<div id="audio-info">
+							<!-- <h5><span class="artist"></span></h5> -->
+							<span class="title">Audio</span>
+							<!-- <span class="artist"></span> - <span class="title"></span> -->
+						</div>
+
+						<div class="tracker">
+
+							<div class="progressBar">
+								<span id="progress2" class="progress"></span>
+							</div>
+
+							<span class="duration" id="duration2">0.00</span>
+						</div>
+						<div class="clearfix"></div>
+						<ul id="playlist2" class="hidden playlist" hidden>
+							<li song="" cover="cover1.jpg" artist="1">Audio 2</li>
+						</ul>
+
+						<div id="buttons">
+							<span>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg play" id="play2"><i class="fas fa-play"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg buffer" id="buffer2" style="display:none" disabled><i class="fa fa-spinner fa-spin"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg pause" id="pause2" style="display:none"><i class="fas fa-pause"></i></button>
+							</span>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+
+		</div> <!-- audioblock -->
+
+		<div class="choicesdiv container">
+			{% for choice in choices %}
+			<div>
+				{% if isGamified == 'true' %}
+
+				<h6><a>
+						<div class='buttonwrap'>
+							<span class="triangle-left"></span>
+							<button class="btn {{theme.button}} btn-block innerbutton" choice={{ choice.choices_id.title }} choicesp={{ choice.samepoint }} choicedp={{ choice.differentpoint }}>
+								{{ choice.choices_id.title }}
+							</button>
+							<span class="triangle-right"></span>
+						</div>
+					</a>
+				</h6>
+				{% else %}
+
+				<div class="form-check choicesradiobtns">
+				  <input class="form-check-input choicesinputradio" type="radio" name="choicesradio" id="choicesradio{{choice.choices_id.pk}}" choice={{ choice.choices_id.title }} choicesp={{ choice.samepoint }} choicedp={{ choice.differentpoint }}>
+				  <label class="form-check-label" for="choicesradio{{choice.choices_id.pk}}">
+					{{ choice.choices_id.title }}
+				  </label>
+				</div>
+
+				<!--<div class='buttonw'>
+
+					<button class="btn {{theme.button}} btn-block innerbutton" choice={{ choice.choices_id.title }} choicesp={{ choice.samepoint }} choicedp={{ choice.differentpoint }}>
+						{{ choice.choices_id.title }}
+					</button>
+
+				</div>-->
+				{% endif %}
+
+			</div>
+			{% endfor %}
+
+		</div> <!-- choicesdiv -->
+
+		<div class="confidencerange container">
+			<div class="row">
+				<div class="col-12">
+					<div class="confrangelabel">
+						<label for="confslider" class="form-label">{{confinst}}</label>
+
+
+					</div>
+					<div id="rangeblock">
+						<input type="range" class="slider" min="0" max="100" step="1" value="0" id="confslider" oninput="setGradiantProperty(value)">
+					</div>
+
+					<div id="confscorespan">
+						<input type="number" min="0" max="100" value="0" id="confidencescore" oninput="setGradiantProperty(value)"/>  %
+					</div>
+
+					<div class="nexttrial" title="Next">
+						<button type="button" class="btn {{theme.button_primary}} btnnext" disabled="true">Next</button>
+					</div>
+
+				</div>
+			</div>
+
+		</div><!-- range slider -->
+
+		<!-- Modal HTML -->
+		{% include "menu/settings_modal.html" %}
+		{% include "menu/login_modal.html" %}
+		{% include "menu/setting_name.html" %}
+		{% include "menu/level_success.html" %}
+		{% include "menu/level_fail.html" %}
+		{% include "menu/feedback.html" %}
+		{% include "menu/player_infodata.html" %}
+		{% include "menu/exit_modal.html" %}
+		{% include "menu/life_end.html" %}
+		{% include "menu/worker_verification.html" %}
+		{% include "menu/game_over.html" %}
+
+	</div>
+
+	<script>
+		var uploadfile,selectedbtn,selectedchoice,selectedsp,selecteddp,audiopath={{ audiopath| safe}},URL="{{ url| safe}}",root=document.documentElement,counteritem=localStorage.getItem("counter"),info=localStorage.getItem("infochecked"),startlv={{ startlv| safe}},score={{ worker_score| safe}},lev={{ worker_level| safe}},infochecked=!!info&&"true"===info,_flg=getCookie("_flg"),index=getCookie("index"),counter=index?parseInt(index):1,flg=_flg?1==_flg:0,theme_cookie=getCookie("theme").replace(/'/g,"\"").replace(/\\054/g,",").replace(/^"(.*)"$/,"$1"),theme=JSON.parse(theme_cookie),rightChoice=new Audio("/audio/sound/right.wav"),wrongChoice=new Audio("/audio/sound/wrong.wav"),validAudioList=!1,validScoreFile=!1;$(".scoretxt").text(score),$(".countertxt").text("#"+counter),$("#playlist1 li:first-child").attr("song",{{ audiopath| safe}}[0]),$("#playlist2 li:first-child").attr("song",{{ audiopath| safe}}[1]);var lv_store=parseInt(lev);$(".level").text(lv_store);var maxlv={{ maxlv| safe}},isMultiple={{ isMultiple| safe}},totaltrials={{ toaltrials_per_level| safe}},lifecount={{ life| safe}},failcount={{ fail| safe}},isGamified={{ isGamified| safe}},enableLife={{ enableLife| safe}};$("#gameOverModal").on("shown.bs.modal",function(){$.ajax({url:URL+"generatetoken",type:"POST",headers:{"X-CSRFToken":getCookie("csrftoken")},success:function(a){$("#exitToken").val(a.token),$("#go-totalhits").val(a.hits)}})}),(0==lifecount||flg)&&($("#gameOverModal").modal("show"),document.cookie="_flg=1; path=/"),$("#multiplecheck").attr("ismultiple",isMultiple),localStorage.removeItem("setlist"),localStorage.removeItem("temp");var prevscoreitem=localStorage.getItem("prevscore"),prevscore=prevscoreitem?parseFloat(prevscoreitem):0;1==counter&&(prevscore=score,localStorage.setItem("prevscore",prevscore)),!1,root.style.setProperty("--background",theme.background),root.style.setProperty("--body-background",theme.body_background),root.style.setProperty("--button-background",theme.button_background),root.style.setProperty("--dark-background",theme.dark_background),root.style.setProperty("--light-grey",theme.light_grey),root.style.setProperty("--hover-grey",theme.hover_grey),root.style.setProperty("--theme-color",theme.theme_color),root.style.setProperty("--progress-theme",theme.progress_theme),root.style.setProperty("--theme-color-light",theme.theme_color_light),root.style.setProperty("--font",theme.font),root.style.setProperty("--textbox-background",theme.textbox_background),root.style.setProperty("--triangle-back",theme.triangle_back),root.style.setProperty("--triangle-hover",theme.triangle_hover),$(".innerbutton").on("click",function(){selectedbtn&&(selectedbtnold=selectedbtn,selectedbtnold.addClass("{{theme.button}}").removeClass("selectedoptionbtn"),selectedbtnold.parent().find(".triangle-left").addClass("darkback-left").removeClass("selectedoptionbtn-left"),selectedbtnold.parent().find(".triangle-right").addClass("darkback-right").removeClass("selectedoptionbtn-right")),selectedbtn=$(this),selectedchoice=$.trim($(this).text()),selectedsp=parseFloat($(this).attr("choicesp")),selecteddp=parseFloat($(this).attr("choicedp")),selectedbtn.addClass("selectedoptionbtn").removeClass("{{theme.button}}"),selectedbtn.parent().find(".triangle-left").addClass("selectedoptionbtn-left").removeClass("darkback-left"),selectedbtn.parent().find(".triangle-right").addClass("selectedoptionbtn-right").removeClass("darkback-right"),0<parseInt($("#confidencescore").val())&&$(".btnnext").prop("disabled",!1)}),$("#confidencescore").on("input",function(){var a=$(this).val();$("#confslider").val(a),0<parseInt($(this).val())&&selectedbtn&&$(".btnnext").prop("disabled",!1)}),$("#confslider").on("input",function(){var a=$(this).val();$("#confidencescore").val(a),0<parseInt($("#confidencescore").val())&&selectedbtn&&$(".btnnext").prop("disabled",!1)}),$(".btnnext").on("click",function(){var a=$("#playlist1 li:first-child").attr("song"),b=$("#playlist2 li:first-child").attr("song"),c=$("#confidencescore").val(),d=selecteddp,e=parseInt($("#confslider").val());$(".buttonwrap").children().prop("disabled",!0),$(".btnnext").prop("disabled",!0),score=+parseFloat(score+d*e/100).toFixed(2),$(".scoretxt").text(score),localStorage.setItem("score",score),$.ajax({url:URL+"optionselected",type:"POST",headers:{"X-CSRFToken":getCookie("csrftoken")},data:{selectedchoice:selectedchoice,leftid:a,rightid:b,groundtruth:{{ speaker| safe}},conf_percent:c,score:score,level:lv_store},tryCount:0,retryLimit:10,tryCount2:0,retryLimit2:3,success:function(a){"success"==a?console.log(a+":Experiment saved"):console.log(a),counter++,localStorage.setItem("counter",counter),document.cookie="index="+counter+"; path=/",document.cookie="nxt=1; path=/",(isGamified&&(wrongChoice.play(),selectedbtn.addClass("red").removeClass("selectedoptionbtn"),selectedbtn.parent().find(".triangle-left").addClass("red-left").removeClass("selectedoptionbtn-left"),selectedbtn.parent().find(".triangle-right").addClass("red-right").removeClass("selectedoptionbtn-right"),enableLife&&setlife()),(!enableLife||!isGamified)&&setTimeout(function(){location.reload()},400))},error:function(a,b){if("error"==b&&0==a.status){if(this.tryCount++,this.tryCount<=this.retryLimit)return void $.ajax(this);}else if(this.tryCount2++,this.tryCount2<=this.retryLimit2)return void $.ajax(this)}})}),$("#settingModal").on("show.bs.modal",function(){$(".errordiv").css("display","none");var a={{ settingdata| safe}},b="",c="true"==$("#multiplecheck").attr("ismultiple"),d=$(".setting-btn").attr("newset"),e=localStorage.getItem("setlist");if(loadimage(),$(".add-set").show(),c?($("#multiplecheck").bootstrapToggle("on"),$(".optionsblock").slideDown(300)):($("#multiplecheck").bootstrapToggle("off"),$(".optionsblock").slideUp(300)),d)$(".setting-btn").text(d),$(".setting-btn").attr("selectedval",d),$(".setting-btn").removeAttr("newset"),$(".setting-btn").removeAttr("set");else{if(a.defset&&($(".setting-btn").text(a.defset),$(".setting-btn").attr("selectedval",a.defset),a.setval&&$(".setting-btn").attr("set",a.setval)),"sequential"===a.rand?$("#randomizeToggle").bootstrapToggle("off"):"randomize"===a.rand?$("#randomizeToggle").bootstrapToggle("on"):"shuffle"===a.rand&&($("#randomizeToggle").bootstrapToggle("off"),$("#shuffleToggle").prop("checked",!0)),0<$(".uploadAudioList")[0].files.length){var f=$(".uploadAudioList")[0].files[0];$("#list-txt").text(f.name)}else $("#list-txt").text(a.aud.split("/")[1]);if(0<$(".uploadAudioScore")[0].files.length){var f=$(".uploadAudioScore")[0].files[0];$("#score-txt").text(f.name)}else $("#score-txt").text(a.sco.split("/")[1]);if(e){var g=e.split(",");$(".othersettings").remove(),$.each(g,function(b,c){c!==a.defset&&$(".settingdropdownoptions").append("<a class='dropdown-item othersettings' href='#'>"+c+"</a>")})}$(".setting-btn").attr("selectedval")?($(".rename-set").show(),$(".downloadreport").show()):($(".rename-set").hide(),$(".downloadreport").hide()),$(".done-rename").hide(),$(".cancel-rename").hide(),$("#instruction-txt").text("{{ instructions.instruction_text|linebreaksbr|striptags}}"),$(".imgPreview").css("background-image","url("+b+")"),$(".imgicn").show()}"true"===$(".setting-btn").prop("contenteditable")&&($(".setting-btn").addClass("dropdown-toggle"),$(".setting-btn").prop("contenteditable",!1),$(".setting-btn").attr("data-toggle","dropdown"),$(".setting-btn").css("cursor","pointer"),$(".rename-set").show(),$(".done-rename").hide(),$(".cancel-rename").hide(),$(".settingdropdown .dropdown-menu").removeAttr("style")),{{ items| safe}}.data,$.ajax({url:URL+"settingshow",type:"POST",headers:{"X-CSRFToken":getCookie("csrftoken")}}).done(function(a){a=JSON.parse(a);var b=$(".othersettings"),c=$(".setting-btn").attr("selectedval"),d=[];0==b.length&&($.each(a,function(a,b){d.push(a),a!==c&&$(".settingdropdownoptions").append("<a class='dropdown-item othersettings' href='#'>"+a+"</a>");var e="<table class=\"table listtable\">";e=e.concat("<tr><th style='width:62%'></th><th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is same'>Same</a></th><th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is different'>Different</a></th><th style='width:8%'></th></tr>"),$.each(b[0],function(a,b){e=e.concat("<tr><td hidden> <span class='opid' style='width:0%'> "+b.id+"</span></td><td> <span class='op' style='width:100%'> "+b.choices_id__title+"</span></td><td> <span style='width:100%'> "+b.samepoint+"</span></td><td> <span style='width:100%'> "+b.differentpoint+"</span></td><td> <span style='width:100%'> <a class='remove' style='color:#c96f4d'><i class='far fa-times-circle'></i></a></span></td></tr>")}),e=e.concat("</table>");var f={};f.table=e,f.ins=b[1],f.set=b[2],f.rand=b[3],f.aud=b[4],f.sco=b[5],localStorage.setItem(a,JSON.stringify(f))}),localStorage.setItem("setlist",d))})}),$(".add").click(function(a){a.preventDefault(),$(".errordiv").css("display","none");var b=$("#multiplecheck").prop("checked"),c=$("#choices-list-item").val(),d=$("#instruction-txt").val(),e=$(".samepoint").val(),f=$(".differentpoint").val(),g=$(".setting-btn").attr("selectedval"),h=localStorage.getItem("temp"),i=h?JSON.parse(h):[],j={};return g?c&&e&&f?void(c&&e&&f&&b&&(j.name=c,j.samepoint=e,j.differentpoint=f,j.checked="checked",i.push(j),localStorage.setItem("temp",JSON.stringify(i)),$.ajax({url:URL+"addoptions",type:"POST",headers:{"X-CSRFToken":getCookie("csrftoken")},data:{choicestxt:c,samepoint:e,differentpoint:f,multiplecheck:b,addop:JSON.stringify(i)}}).done(function(a){if("success"==a){var b=$(".listtable");0==b.length&&($("#list-items").append("<table border='1' class='table listtable'>"),$(".listtable").append("<tr><th style='width:62%'></th><th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is same'>Same</a></th><th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is different'>Different</a></th><th style='width:8%'></th></tr>")),$(".listtable").append("<tr><td> <span style='width:100%'> "+c+"</span></td><td> <span style='width:100%'> "+e+"</span></td><td> <span style='width:100%'> "+f+"</span></td><td> <span style='width:100%'> <a class='remove' style='color:#c96f4d'><i class='far fa-times-circle'></i></a></span></td></tr>"),0==b.length&&$(".listtable").append("</table>"),$("#choices-list-item").val(""),$(".samepoint").val(""),$(".differentpoint").val("")}else $(".errortxt").text("Save failed!"),$(".errordiv").css("display","block"),$("#settingModal").scrollTop(1e3)}))):($(".errortxt").text("Required field can't be empty"),$(".errordiv").css("display","block"),void $("#settingModal").scrollTop(1e3)):($(".errortxt").text("Please select a setting"),$(".errordiv").css("display","block"),void $("#settingModal").scrollTop(1e3))}),$(document).on("click",".remove",function(){var a=$("#multiplecheck").prop("checked"),b=$(this).parent().closest("tr").find(".op").text();if(b&&a){var c=$(this).parent().closest("tr").find(".opid").text();$.ajax({url:URL+"deletechoice",type:"POST",headers:{"X-CSRFToken":getCookie("csrftoken")},data:{multiplecheck:a,deleteoption:b,opid:c}}).done(function(a){"success"==a?console.log(a+"option deleted"):console.log(a)})}var d=1==$(this).parent().closest("tr").siblings().length;$(this).parent().closest("tr").remove(),d&&$(".listtable").remove()});function loadimage(){if(0<$(".uploadImage")[0].files.length){var a=$(".uploadImage")[0].files[0],b=a.type;if(-1<$.inArray(b,["image/gif","image/jpeg","image/png"])){uploadfile=a;var c=new FileReader;c.readAsDataURL(a),c.onloadend=function(a){$(".imgPreview").css("background-image","url("+a.target.result+")"),$(".imgicn").hide()}}}}function getCookie(a){var b=null;if(document.cookie&&""!=document.cookie)for(var c,d=document.cookie.split(";"),e=0;e<d.length;e++)if(c=jQuery.trim(d[e]),c.substring(0,a.length+1)==a+"="){b=decodeURIComponent(c.substring(a.length+1));break}return b}function convertToFile(a){var b=null,c=null,d=new XMLHttpRequest;d.open("GET",a,!0),d.responseType="blob",d.onload=function(){return b=d.response,c=new File([b],b),c},d.send()}function setGradiantProperty(a){root.style.setProperty("--gradiantcolor","linear-gradient(90deg, "+theme.progress_theme+" "+a+"%, #b1a9a9 "+a+"%)")}function setlife(){0<lifecount&&(lifecount-=1,failcount+=1,$("#life"+lifecount).removeClass("fa-heart").addClass("fa-heart-broken"),$.ajax({url:URL+"savelife",type:"POST",data:{life:lifecount,fail:failcount},tryCount:0,retryLimit:10,tryCount2:0,retryLimit2:3,headers:{"X-CSRFToken":getCookie("csrftoken")},success:function(a){"success"==a&&setTimeout(function(){location.reload()},400)},error:function(a,b){if("error"==b&&0==a.status){if(this.tryCount++,this.tryCount<=this.retryLimit)return void $.ajax(this);}else if(this.tryCount2++,this.tryCount2<=this.retryLimit2)return void $.ajax(this)}}))}
+	</script>
+
+	<script src="{% static 'js/main.min.js' %}?v=1.2"></script>
+</body>
+
+</html>

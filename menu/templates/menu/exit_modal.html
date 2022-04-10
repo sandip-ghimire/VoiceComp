@@ -1,0 +1,84 @@
+<div id="exitModal" class="modal" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content {{theme.bg}}">
+            <div class="modal-header text-center">
+                <h4 class="modal-title font-weight-bold exitgametitle">Exit Game</h4>
+                <button type="button" class="modal-title close" data-dismiss="modal" aria-label="Close">
+                    <span style="color:{{theme.cross_back}}">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+                </button>
+            </div>
+
+            <div class="modal-body ">
+                <form id="token-form">
+                    {% csrf_token %}
+
+                    <div class="text-center infotxt">
+                        Thank you! for your participation. We would love to hear from you about your experience. Please provide us your ratings below based on your experience.
+                    </div>
+                    <br>
+
+                    <div class="form-group wrap-box">
+                        <label for="tistar">I find the task interesting.</label>
+                        <div class="task-interesting" id="tistar">
+                            <span title="Strongly Disagree" class="fb-star fa fa-star" i="1"></span>
+                            <span title="Disagree" class="fb-star fa fa-star" i="2"></span>
+                            <span title="Neither agree nor disagree" class="fb-star fa fa-star" i="3"></span>
+                            <span title="Agree" class="fb-star fa fa-star" i="4"></span>
+                            <span title="Strongly Agree" class="fb-star fa fa-star" i="5"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group wrap-box">
+                        <label for="distar">I would rate the difficulty of the task as:</label>
+                        <div class="task-difficulty" id="distar">
+                            <span title="Too easy" class="fb-star fa fa-shield-alt" i="1"></span>
+                            <span title="Somewhat easy" class="fb-star fa fa-shield-alt" i="2"></span>
+                            <span title="Neither difficult nor easy" class="fb-star fa fa-shield-alt" i="3"></span>
+                            <span title="Somewhat difficult" class="fb-star fa fa-shield-alt" i="4"></span>
+                            <span title="Too difficult" class="fb-star fa fa-shield-alt" i="5"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group wrap-box">
+                        <label for="sastar">I am happy about my performance.</label>
+                        <div class="task-satisfaction" id="sastar">
+                            <span title="Strongly Disagree" class="fb-star fa fa-frown" i="1"></span>
+                            <span title="Disagree" class="fb-star fa fa-frown-open" i="2"></span>
+                            <span title="Neither agree nor disagree" class="fb-star fa fa-meh" i="3"></span>
+                            <span title="Agree" class="fb-star fa fa-smile" i="4"></span>
+                            <span title="Strongly Agree" class="fb-star fa fa-grin-beam" i="5"></span>
+                        </div>
+                    </div>
+
+                    <br>
+                    <hr style="border-top: 1px solid {{theme.font}};">
+
+                     <div class="form-group form-inline">
+                         <label class="hitslabel" for="totalhits">HITs performed:</label>
+                         <input type="text" class="form-control cl-totalhits" id="totalhits" name="totalhits" placeholder="" readonly>
+                    </div>
+
+                    <div class="form-group form-inline">
+                        <div class="form-group form-inline">
+                            <label for="uniquetoken">Token: &nbsp;&nbsp;</label>
+                            <input class="form-control input-lg txtbox" type="text" name="uniquetoken" id="uniquetoken" placeholder=""
+                            required="required" readonly>
+                        </div>
+                        &nbsp;&nbsp;
+
+                        <div class="form-group btnbox">
+                            <button type="button" class="btn {{theme.button_primary}} btn-block btn-lg copybtn">Copy Token</button>
+                        </div>
+                    </div>
+
+                     <div class="text-center infotxt">
+                        You can continue the game if you want to but note that this token is associated with current HIT. So, if you continue, do not forget to get a new token again when you decide to quit.
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

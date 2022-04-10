@@ -1,0 +1,171 @@
+
+<div id="settingModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable  modal-dialog-centered">
+        <div class="modal-content {{theme.bg}}">
+            <div class="modal-header">
+                <h5 class="modal-title">Settings</h5>
+                <button type="button" class="modal-title close" data-dismiss="modal" aria-label="Close">
+                    <span style="color:{{theme.cross_back}}">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+
+                </button>
+            </div>
+
+            <form id="settings-form">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="checkbox2">
+                        <label> Multiple Choice <input type="checkbox" id="multiplecheck" name="multiplecheckbox" data-toggle="toggle"
+                            data-style="ios" data-size="mini"></label>
+                    </div>
+
+
+                    <div class="optionsblock">
+
+                        <div class="dropdown settingdropdown">
+                            <button class="btn {{theme.button_primary}} dropdown-toggle setting-btn" type="button" selectedval="" data-toggle="dropdown">Choose setting
+                                <span class="caret"></span></button>
+                            <div class="dropdown-menu settingdropdownoptions">
+                                <!-- <a class="dropdown-item opennewsetting" href='#'>New Setting</a> -->
+                                            
+                            </div>
+
+                            <button type="button" class="btn flex-shrink-1 rename-set" title="Rename">            
+                                <i class="fas fa-edit"></i>     
+                            </button>
+
+                            <button type="button" class="btn flex-shrink-1 add-set opennewsetting" title="Add new setting">            
+                                <i class="fas fa-plus-circle"></i>     
+                            </button>
+
+                            <button type="button" class="btn flex-shrink-1 downloadreport" title="Download report for this setting">            
+                                <i class="fas fa-download"></i>   
+                            </button>
+
+                            <button type="button" class="btn flex-shrink-1 done-rename" title="Done">            
+                                <i class="fas fa-check-circle"></i>   
+                            </button>
+                            
+                            <button type="button" class="btn flex-shrink-1 cancel-rename" title="Cancel">            
+                                <i class="fas fa-times-circle"></i>    
+                            </button>
+                        </div>
+
+                        <div class="table-responsive" id="list-items"></div>
+                        <hr>
+
+                        <div class="add-items input-group">
+
+                            <div class="table-responsive tableblock">
+            
+                                <table border="1" class='addoptiontable'>
+                                    <tr>
+                                        <th style="width:60%"></th>
+                                        <th style="width:15%"><a data-toggle="tooltip" data-placement="top" title="Assign points when ground truth is same">Same</a></th>
+                                        <th style="width:15%"><a data-toggle="tooltip" data-placement="top" title="Assign points when ground truth is different">Different</a></th>
+                                        <th style="width:10%"></th>
+                                                    
+                                    </tr>
+                                    <tr>
+                                        <td> <input type="text" class="form-control addlisttxt optiontxt" id="choices-list-item" name="choicestxt" placeholder="Add option" style="width:100%"> </td>
+                                        <td> <input type="number" class="form-control addlisttxt samepoint" style="width:100%"> </td>
+                                        <td> <input type="number" class="form-control addlisttxt differentpoint" style="width:100%"> </td>
+                                        <td>
+                                            <div class="input-group-append" title="Click to add to the list">
+                                                <button type="button" class="btn {{theme.button_primary}} add"><i class="fas fa-check"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <small id="info-txt" class="text-primary">Add option and assign points when ground truth is same/different for that option.</small>
+
+                                        
+                        </div>
+                    </div>
+
+
+                    <div class="form-group textarea1">
+                    
+                        <label for="instruction-txt"> Instructions </label>
+                        <textarea type="textarea" class="form-control form-rounded z-depth-1" id="instruction-txt" name="instructiontxt"
+                            rows="3" placeholder="Write instructions here..."></textarea>
+                    </div>
+
+                    <div class="insimage-div">
+                                
+                        <div class="d-flex flex-column imageWrapper" >
+                            <div class="float-right imgPreview"><i class="far fa-image imgicn"></i></div>
+                            <div class="d-flex flex-row">
+                                <label class="float-right instimg btn {{theme.button_primary}}"> Add Image
+                                    <input type="file" class="uploadImage" value="Add image" style="width: 0px;height: 0px;overflow: hidden;">
+                                </label>
+                                <button type="button" class="flex-shrink-1 dltImage" title="Delete">
+                                    <span class="btn-dltimage">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </span>
+                                </button>
+
+                            </div>
+                            
+                        </div>
+                           
+                    </div>
+
+                    <hr>
+                    <div>
+                        <label> Audio Files </label>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-4 col-12">
+                                    <label class=" btn {{theme.button_primary}}"> Upload Audio List
+                                        <input type="file" class="uploadAudioList" value="Audio List" style="width: 0px;height: 0px;overflow: hidden;">
+                                    </label>
+                                    <p><span id="list-txt" class="text-primary"></span></p>
+
+                                </div>
+                                <div class="col-sm-4 col-12">
+                                    <label class=" btn {{theme.button_primary}}"> Upload Score File
+                                        <input type="file" class="uploadAudioScore" value="Audio Score" style="width: 0px;height: 0px;overflow: hidden;">
+                                    </label>
+                                    <p><span id="score-txt" class="text-primary"></span></p>
+                                </div>
+                                <div class="col-sm-4 col-12">
+                                    <label>
+                                        <input type="checkbox" checked id="randomizeToggle" name="randomizeAudio" 
+                                            data-toggle="toggle" data-on="Randomize" data-off="Sequential" data-onstyle="{{theme.primary}}" data-offstyle="{{theme.primary}}" data-width="120" data-height="38">
+                                    </label>
+
+                                    <div class="form-check">
+                                      <input class="form-check-input" type="checkbox" value="" id="shuffleToggle">&nbsp;
+                                      <label class="form-check-label" for="shuffleToggle">
+                                         Shuffle
+                                      </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+
+                </div>
+                <div class="modal-footer d-flex">
+                                
+                    <div class="settingitems d-flex justify-content-end"">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn {{theme.button_primary}} saveSettings">Save changes</button>
+                    </div>				
+                                
+                                
+                    <div class='errordiv'>
+                        <hr>
+                        <h6 class='errortxt'></h6>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

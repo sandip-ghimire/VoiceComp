@@ -1,0 +1,1004 @@
+{% load static %}
+{% load replaceht %}
+{% load compress %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="{% static 'images/vclogo.png' %}"/>
+	<title>Voice Compare</title>
+	<!-- jquery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- Popper -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	 crossorigin="anonymous">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	 crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+	 crossorigin="anonymous">
+
+	<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+	{% compress css %}
+
+	<link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.2" media="screen">
+	{% endcompress %}
+
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-sm {{theme.navbar}} {{theme.bg}}">
+		<a class="navbar-brand" href="#"><b><span style="color: {{theme.theme_color}};weight:bold">&nbsp;Voice</span></b>Comp</a>
+
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+		 aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav ml-auto">
+
+				{% if user.is_authenticated and user.is_staff %}
+				<li class="nav-item settingsdiv">
+					<a class='nav-link dropdown-item btn btn-settings {{theme.button}} btn-lg' role='button' href='#settingModal'
+					 data-toggle="modal"><i class="fas fa-cog"></i> Settings</a>
+				</li>
+				{% endif %}
+
+
+				<li class='nav-item dropdown themediv' theme='dark'>
+					{% if isGamified == 'true' %}
+
+					<a class='nav-link dropdown-item dropdown-toggle btn {{theme.button}} btn-lg' href='#' id='theme_menu' role='button' data-toggle='dropdown'
+					 aria-haspopup='true' aria-expanded='false'>
+						<i class="fas fa-puzzle-piece"></i> Themes
+					</a>
+					<div class='dropdown-menu dropdown-menu-right {{theme.bg}}' aria-labelledby='theme_menu'>
+						<a class='dropdown-item lighttheme btn {{theme.button}}' role='button'>light</a>
+						<a class='dropdown-item darktheme btn {{theme.button}}' role='button'>dark</a>
+					</div>
+					{% endif %}
+				</li>
+
+
+
+				<li class='nav-item dropdown userdiv'>
+					{% if user.is_authenticated and user.is_staff %}
+
+					<a class='nav-link dropdown-toggle btn btn-user {{theme.button}} btn-lg' href='#' id='user_loggedin' role='button'
+					 data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+						<i class="fas fa-user"></i> {{user.username}}
+					</a>
+
+					<div class='dropdown-menu dropdown-menu-right {{theme.bg}}' aria-labelledby='user_loggedin'>
+						<a class='dropdown-item mturkverification btn {{theme.button}}' role='button' href='#workerVerifyModal' data-toggle="modal"><i class="fas fa-check"></i>
+							verify worker</a>
+						<a class='dropdown-item logout btn {{theme.button}}' role='button' href='{% url "logout" %}'><i class="fas fa-sign-out-alt"></i>
+							logout</a>
+					</div>
+					{% else %}
+					<a class="nav-link dropdown-item btn {{theme.button}} btn-lg" href="#loginModal" role='button' data-toggle="modal"><i
+						 class="fas fa-sign-in-alt"></i>
+						Login</a>
+					{% endif %}
+
+				</li>
+
+				<li class="nav-item exitdiv">
+					<a class='nav-link dropdown-item btn btn-exit {{theme.button}} btn-lg' role='button' href='#'
+					 data-toggle="modal"><i style="color:red" class="fas fa-power-off"></i> Get Token/ Quit</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<div class="loader">
+		<span class='loadingIcon'>
+			<h6>Loading...</h6>
+			<!-- <i class="fas fa-snowflake fa-spin fa-3x fa-fw"></i> -->
+			<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i>
+		</span>
+
+	</div>
+
+	<div class="loader2">
+		<span class='loading2Icon'>
+			<h6><i class="fas fa-spinner fa-pulse"></i>  Loading...</h6>
+		</span>
+
+	</div>
+
+
+	<div class="contentWrapper container-fluid">
+		<div class="container">
+
+
+			<div class="row">
+				<div class="col-10 instructionsdiv ">
+					<div class="row instructionrow">
+						<!-- <div class="col-10"> -->
+							{% if 'h_start' in instructions.instruction_text %}
+								<h5>{{ instructions.instruction_text|replaceht }}</h5>
+							{% else %}
+								<h5>{{ instructions.instruction_text }}</h5>
+							{% endif %}
+
+
+						<!-- </div> -->
+							{% if instructions.instruction_image %}
+								<!-- <div class="col-2"> -->
+								&nbsp;&nbsp;<img class="float-right instructionImage" src='{{instructions.instruction_image.url}}'></img>
+								<!-- </div> -->
+							{% endif %}
+
+					</div>
+
+
+				</div> <!-- instructiondiv -->
+
+				{% if isGamified == 'true' %}
+				<div class="col-2 scorediv">
+					<div class="scorepannel">
+						<div class="scoreheader row">
+							<h6 class="scoreheadertxt">SCORE</h6>
+
+						</div>
+						<div class="scorebody row">
+							<h5 class="scoretxt">0</h5>
+						</div>
+
+						{% if enableLife == 'true' %}
+						<div class="life">
+							{% for life in lifelist %}
+							<i class="fas fa-heart" id="life{{life}}"></i>&nbsp;
+							{% endfor %}
+
+							{% for fail in faillist %}
+							<i class="fas fa-heart-broken" id="fail{{fail}}"></i>&nbsp;
+							{% endfor %}
+						</div>
+						{% endif %}
+
+					</div>
+
+
+				</div> <!--scoredivend-->
+				{% endif %}
+
+			</div>
+
+		</div>
+
+		<div class="container menubar">
+			<div class="row">
+				<div class="col-4">
+					<div class="levelwrap">
+						{% if isGamified == 'true' %}
+						<h5>
+							<span class="levelspan">Level:<span class="level">1</span></span>
+							<span class="decospanleft"></span>
+						</h5>
+						{% endif %}
+					</div>
+
+				</div>
+
+				<div class="col-4">
+					<h5><span class="countertxt"></span></h5>
+				</div>
+
+				<div class="col-4">
+					{% if user.is_authenticated and user.is_staff %}
+						<div class="settingwrap">
+							<h5>
+
+								<!--<span class="settingspan"><i class="fas fa-cog"></i></span>-->
+								<span class="settingspan resetgame"><a data-toggle="tooltip" data-placement="top" title="Restart game"><i class="fas fa-sync-alt"></i></a></span>
+
+							</h5>
+						</div>
+					{% endif %}
+
+				</div>
+			</div>
+		</div>
+		<div class="container audioblock">
+			<div class="row">
+				<div class="leftblock col-6">
+
+					<div class="audio-player" id="audio-player1">
+						<div id="audio-info">
+
+							<span class="title">Audio</span>
+							<!-- <span class="artist"></span> - <span class="title"></span> -->
+						</div>
+
+						<div class="tracker">
+
+							<div class="progressBar">
+								<span id="progress1" class="progress"></span>
+							</div>
+							<span class="duration" id="duration1">0.00</span>
+						</div>
+						<div class="clearfix"></div>
+						<ul id="playlist1" class="hidden playlist" hidden>
+							<li song="" cover="cover1.jpg" artist="1">Audio 1</li>
+						</ul>
+
+						<div id="buttons">
+							<span>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg play" id="play1"><i class="fas fa-play"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg buffer" id="buffer1" style="display:none" disabled><i class="fa fa-spinner fa-spin"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg pause" id="pause1" style="display:none"><i class="fas fa-pause"></i></button>
+							</span>
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="rightblock col-6">
+					<div class="audio-player" id="audio-player2">
+						<div id="audio-info">
+							<!-- <h5><span class="artist"></span></h5> -->
+							<span class="title">Audio</span>
+							<!-- <span class="artist"></span> - <span class="title"></span> -->
+						</div>
+
+						<div class="tracker">
+
+							<div class="progressBar">
+								<span id="progress2" class="progress"></span>
+							</div>
+
+							<span class="duration" id="duration2">0.00</span>
+						</div>
+						<div class="clearfix"></div>
+						<ul id="playlist2" class="hidden playlist" hidden>
+							<li song="" cover="cover1.jpg" artist="1">Audio 2</li>
+						</ul>
+
+						<div id="buttons">
+							<span>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg play" id="play2"><i class="fas fa-play"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg buffer" id="buffer2" style="display:none" disabled><i class="fa fa-spinner fa-spin"></i></button>
+								<button type="button" class="btn {{theme.button_outline_primary}} btn-lg pause" id="pause2" style="display:none"><i class="fas fa-pause"></i></button>
+							</span>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+
+		</div> <!-- audioblock -->
+
+		<div class="choicesdiv container">
+			{% for choice in choices %}
+			<div>
+				{% if isGamified == 'true' %}
+
+				<h6><a>
+						<div class='buttonwrap'>
+							<span class="triangle-left"></span>
+							<button class="btn {{theme.button}} btn-block innerbutton" choice={{ choice.choices_id.title }} choicesp={{ choice.samepoint }} choicedp={{ choice.differentpoint }}>
+								{{ choice.choices_id.title }}
+							</button>
+							<span class="triangle-right"></span>
+						</div>
+					</a>
+				</h6>
+				{% else %}
+
+				<div class="form-check choicesradiobtns">
+				  <input class="form-check-input choicesinputradio" type="radio" name="choicesradio" id="choicesradio{{choice.choices_id.pk}}" choice={{ choice.choices_id.title }} choicesp={{ choice.samepoint }} choicedp={{ choice.differentpoint }}>
+				  <label class="form-check-label" for="choicesradio{{choice.choices_id.pk}}">
+					{{ choice.choices_id.title }}
+				  </label>
+				</div>
+
+				</div>-->
+				{% endif %}
+
+			</div>
+			{% endfor %}
+
+		</div> <!-- choicesdiv -->
+
+		<div class="confidencerange container">
+			<div class="row">
+				<div class="col-12">
+					<div class="confrangelabel">
+						<label for="confslider" class="form-label">{{confinst}}</label>
+
+
+					</div>
+					<div id="rangeblock">
+						<input type="range" class="slider" min="0" max="100" step="1" value="0" id="confslider" oninput="setGradiantProperty(value)">
+					</div>
+
+					<div id="confscorespan">
+						<input type="number" min="0" max="100" value="0" id="confidencescore" oninput="setGradiantProperty(value)"/>  %
+					</div>
+
+					<div class="nexttrial" title="Next">
+						<button type="button" class="btn {{theme.button_primary}} btnnext" disabled="true">Next</button>
+					</div>
+
+				</div>
+			</div>
+
+		</div><!-- range slider -->
+
+		<!-- Modal HTML -->
+		{% include "menu/settings_modal.html" %}
+		{% include "menu/login_modal.html" %}
+		{% include "menu/setting_name.html" %}
+		{% include "menu/level_success.html" %}
+		{% include "menu/level_fail.html" %}
+		{% include "menu/feedback.html" %}
+		{% include "menu/player_infodata.html" %}
+		{% include "menu/exit_modal.html" %}
+		{% include "menu/life_end.html" %}
+		{% include "menu/worker_verification.html" %}
+		{% include "menu/game_over.html" %}
+
+	</div>
+
+	{% compress js inline %}
+	<script src="{% static 'js/jquery.ui.min.js' %}"></script>
+	<script>
+		var audiopath = {{ audiopath| safe}};
+		var URL = "{{ url| safe}}";
+		var root = document.documentElement;
+		var counteritem = localStorage.getItem('counter');
+		var info = localStorage.getItem('infochecked');
+		var startlv = {{ startlv| safe}};
+		var score = {{ worker_score| safe}};
+		var lev = {{ worker_level| safe}};
+
+		var infochecked = (info) ? (info === 'true') : false;
+		var _flg = getCookie("_flg");
+		var index = getCookie("index");
+		var counter = (index) ? parseInt(index) : 1;
+		var flg = (_flg) ? (_flg == 1) : 0;
+		var theme_cookie = getCookie("theme").replace(/'/g, '"').replace(/\\054/g, ',').replace(/^"(.*)"$/, '$1');
+		var theme = JSON.parse(theme_cookie);
+		var rightChoice = new Audio('/audio/sound/right.wav');
+		var wrongChoice = new Audio('/audio/sound/wrong.wav');
+		var validAudioList = false;
+		var validScoreFile = false;
+		var uploadfile, selectedbtn, selectedchoice, selectedsp, selecteddp;
+
+		$('.scoretxt').text(score);
+		$('.countertxt').text('#' + counter);
+		$('#playlist1 li:first-child').attr('song', audiopath[0]);
+		$('#playlist2 li:first-child').attr('song', audiopath[1]);
+		//var lv_data = getCookie("cslevel");
+		var lv_store = (lev) ? parseInt(lev) : parseInt(startlv);
+		$('.level').text(lv_store);
+
+// 		if (lv_store == 1 && counter == 1 && !infochecked){
+// 			$('#infodataModal').modal('show');
+// 		}
+
+
+		var maxlv = {{ maxlv| safe}};
+		var isMultiple = {{ isMultiple| safe}};
+		var totaltrials = {{ toaltrials_per_level| safe}};
+		var lifecount = {{ life| safe}};
+		var failcount = {{ fail| safe}};
+		var isGamified = {{ isGamified| safe}};
+		var enableLife = {{ enableLife| safe}};
+
+		$('#gameOverModal').on('shown.bs.modal', function (e) {
+			$.ajax({
+				url: URL + "generatetoken",
+				type: "POST",
+				tryCount: 0,
+				retryLimit: 10,
+				tryCount2: 0,
+				retryLimit2: 3,
+				headers: { "X-CSRFToken": getCookie("csrftoken") },
+				success:function(response){
+					$('#exitToken').val(response.token);
+					$('#go-totalhits').val(response.hits);
+				},
+				error: function(xhr, txtStatus, errorThrown){
+					if (txtStatus == 'error' && xhr.status == 0){
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit){
+							$.ajax(this);
+							return;
+						}
+					} else {
+						this.tryCount2++;
+						if (this.tryCount2 <= this.retryLimit2){
+							$.ajax(this);
+							return;
+						}
+					}
+				}
+			});
+		});
+
+		if (isGamified && enableLife){
+			if (lifecount == 0 || flg){
+				//$('#lifeEndModal').modal('show');
+				$('#gameOverModal').modal('show');
+				document.cookie = "_flg=1; path=/";
+			}
+		}else{
+			if (flg){
+				$('#gameOverModal').modal('show');
+			}
+		}
+
+		$('#multiplecheck').attr('ismultiple',isMultiple);
+		localStorage.removeItem('setlist');
+		localStorage.removeItem('temp');
+
+		var prevscoreitem = localStorage.getItem('prevscore');
+		var prevscore = (prevscoreitem) ? parseFloat(prevscoreitem) : 0;
+		if (counter == 1) {
+			prevscore = score;
+			localStorage.setItem('prevscore',prevscore);
+		}
+		if ('False'==="{{user.is_authenticated| safe}}" || 'False'==="{{user.is_staff| safe}}"){
+			localStorage.clear();
+			localStorage.setItem('score',score);
+			localStorage.setItem('counter',counter);
+			localStorage.setItem('prevscore',prevscore);
+		}
+
+
+		root.style.setProperty("--background", theme.background);
+		root.style.setProperty("--body-background", theme.body_background);
+		root.style.setProperty("--button-background", theme.button_background);
+		root.style.setProperty("--dark-background", theme.dark_background);
+		root.style.setProperty( "--light-grey", theme.light_grey);
+		root.style.setProperty("--hover-grey", theme.hover_grey);
+		root.style.setProperty("--theme-color", theme.theme_color);
+		root.style.setProperty("--progress-theme", theme.progress_theme);
+		root.style.setProperty("--theme-color-light", theme.theme_color_light);
+		root.style.setProperty("--font", theme.font);
+		root.style.setProperty("--textbox-background", theme.textbox_background);
+		root.style.setProperty("--triangle-back", theme.triangle_back);
+		root.style.setProperty("--triangle-hover", theme.triangle_hover);
+
+
+		$(".innerbutton").on("click", function () {
+			if (selectedbtn){
+				selectedbtnold = selectedbtn;
+				selectedbtnold.addClass("{{theme.button}}").removeClass("selectedoptionbtn");
+				selectedbtnold.parent().find('.triangle-left').addClass('darkback-left').removeClass("selectedoptionbtn-left");
+				selectedbtnold.parent().find('.triangle-right').addClass('darkback-right').removeClass("selectedoptionbtn-right");
+			}
+			selectedbtn = $(this);
+			selectedchoice = $.trim($(this).text());
+			selectedsp = parseFloat($(this).attr('choicesp'));
+			selecteddp = parseFloat($(this).attr('choicedp'));
+			selectedbtn.addClass('selectedoptionbtn').removeClass("{{theme.button}}");
+			selectedbtn.parent().find('.triangle-left').addClass('selectedoptionbtn-left').removeClass("darkback-left");
+			selectedbtn.parent().find('.triangle-right').addClass('selectedoptionbtn-right').removeClass("darkback-right");
+			if (parseInt($('#confidencescore').val()) > 0){
+				$('.btnnext').prop('disabled', false);
+			}
+
+		});
+
+		$("#confidencescore").on("input", function () {
+			var x = $(this).val();
+			$("#confslider").val(x);
+			if (parseInt($(this).val()) > 0 && selectedbtn) {
+				$('.btnnext').prop('disabled', false);
+			}
+
+		});
+
+		$("#confslider").on("input", function () {
+			//root.style.setProperty("--gradiantcolor", 'linear-gradient(90deg, ' + theme.progress_theme + ' ' + x + '%, #b1a9a9 ' + x + '%)');
+		    var x = $(this).val();
+		    $("#confidencescore").val(x);
+            //var color = 'linear-gradient(90deg, ' + theme.progress_theme + ' ' + x + '%, #b1a9a9 ' + x + '%)';
+            //$(this).css('background', color);
+
+			if (parseInt($('#confidencescore').val()) > 0 && selectedbtn) {
+				$('.btnnext').prop('disabled', false);
+			}
+
+		});
+
+		$(".btnnext").on("click", function () {
+			var groundtruth = {{ speaker| safe}};
+			var leftid = $('#playlist1 li:first-child').attr('song');
+			var rightid = $('#playlist2 li:first-child').attr('song');
+			var conf_percent = $("#confidencescore").val();
+			var points = (groundtruth == 'same') ? selectedsp : selecteddp;
+			var scorefactor = parseInt($("#confslider").val());
+
+			$('.buttonwrap').children().prop('disabled', true);
+			$('.btnnext').prop('disabled', true);
+
+			score = +parseFloat(score + (points * scorefactor / 100)).toFixed(2);
+			$('.scoretxt').text(score);
+			localStorage.setItem('score', score);
+
+			$.ajax({
+				url: URL + "optionselected",
+				type: "POST",
+				headers: { "X-CSRFToken": getCookie("csrftoken") },
+				data: {
+					selectedchoice: selectedchoice,
+					leftid: leftid,
+					rightid: rightid,
+					groundtruth: groundtruth,
+					conf_percent: conf_percent,
+					level: lv_store,
+					sp: selectedsp,
+					dp: selecteddp
+				},
+				tryCount: 0,
+				retryLimit: 10,
+				tryCount2: 0,
+				retryLimit2: 3,
+				success: function(data){
+				    if (data == "success") {
+						console.log(data + ':Experiment saved');
+					} else {
+						console.log(data);
+					}
+
+					counter++;
+					localStorage.setItem('counter', counter);
+					document.cookie = 'index' + "=" +  counter + "; path=/";
+					document.cookie = "nxt=1; path=/";
+
+					if ((groundtruth == 'same' && selectedsp > 0) || (groundtruth == 'different' && selecteddp > 0)) {
+						if (isGamified){
+							rightChoice.play();
+							selectedbtn.addClass('green').removeClass("selectedoptionbtn");
+							selectedbtn.parent().find('.triangle-left').addClass('green-left').removeClass("selectedoptionbtn-left");
+							selectedbtn.parent().find('.triangle-right').addClass('green-right').removeClass("selectedoptionbtn-right");
+						}
+
+						setTimeout(function () {
+							location.reload();
+						}, 400);
+					} else {
+						if (isGamified){
+							wrongChoice.play();
+							selectedbtn.addClass('red').removeClass("selectedoptionbtn");
+							selectedbtn.parent().find('.triangle-left').addClass('red-left').removeClass("selectedoptionbtn-left");
+							selectedbtn.parent().find('.triangle-right').addClass('red-right').removeClass("selectedoptionbtn-right");
+							if (enableLife){
+								setlife();
+							}
+						}
+						if (!enableLife || !isGamified){
+							setTimeout(function () {
+								location.reload();
+							}, 400);
+						}
+
+					}
+				},
+				error: function(xhr, txtStatus, errorThrown){
+				    if (txtStatus == 'error' && xhr.status == 0){
+				        this.tryCount++;
+				        if (this.tryCount <= this.retryLimit){
+				            $.ajax(this);
+				            return;
+				        }
+				    } else {
+				        this.tryCount2++;
+				        if (this.tryCount2 <= this.retryLimit2){
+				            $.ajax(this);
+				            return;
+				        }
+				    }
+				}
+			});
+
+		});
+
+
+		$("#settingModal").on('show.bs.modal', function () {
+			$('.errordiv').css('display', 'none');
+			var items = {{ items| safe}};
+			var settingData = {{ settingdata| safe}};
+			var instruction = "{{ instructions.instruction_text|linebreaksbr|striptags}}";
+			var imgUrl = '';
+			{% if instructions.instruction_image %}
+				imgUrl = "{{ instructions.instruction_image.url| safe }}";
+			{% endif %}
+			var ismultiop = ($('#multiplecheck').attr('ismultiple') == 'true')
+			var newset = $('.setting-btn').attr('newset');
+			var listset = localStorage.getItem('setlist');
+			loadimage();
+			$('.add-set').show();
+
+			// $('#list-items').html(localStorage.getItem('listItems'));
+			if (ismultiop) {
+				$('#multiplecheck').bootstrapToggle('on');
+				$('.optionsblock').slideDown(300);
+			} else {
+				$('#multiplecheck').bootstrapToggle('off');
+				$('.optionsblock').slideUp(300);
+			}
+
+			if (newset){
+				$('.setting-btn').text(newset);
+				$('.setting-btn').attr('selectedval', newset);
+				$('.setting-btn').removeAttr('newset');
+				$('.setting-btn').removeAttr('set');
+			}else{
+				if (settingData.defset){
+					$('.setting-btn').text(settingData.defset);
+					$('.setting-btn').attr('selectedval', settingData.defset);
+					if (settingData.setval){
+						$('.setting-btn').attr('set', settingData.setval);
+					}
+				}
+
+				if (settingData.rand === 'sequential') {
+					$('#randomizeToggle').bootstrapToggle('off');
+				} else if (settingData.rand === 'randomize') {
+					$('#randomizeToggle').bootstrapToggle('on');
+				} else if (settingData.rand === 'shuffle') {
+					$('#randomizeToggle').bootstrapToggle('off');
+					$('#shuffleToggle').prop('checked', true);
+				}
+
+				if ($('.uploadAudioList')[0].files.length > 0) {
+					var file = $('.uploadAudioList')[0].files[0];
+					$('#list-txt').text(file.name);
+				} else {
+					$('#list-txt').text(settingData.aud.split('/')[1]);
+				}
+
+				if ($('.uploadAudioScore')[0].files.length > 0) {
+					var file = $('.uploadAudioScore')[0].files[0];
+					$('#score-txt').text(file.name);
+				} else {
+					$('#score-txt').text(settingData.sco.split('/')[1]);
+				}
+
+
+				if (listset){
+					var list = listset.split(',');
+					$('.othersettings').remove();
+					$.each(list, function (i,item) {
+						if (item !== settingData.defset){
+							$('.settingdropdownoptions').append("<a class='dropdown-item othersettings' href='#'>" + item + "</a>")
+						}
+					});
+				}
+
+				if ($('.setting-btn').attr('selectedval')){
+					$('.rename-set').show();
+					$('.downloadreport').show();
+				}else{
+					$('.rename-set').hide();
+					$('.downloadreport').hide();
+				}
+
+				$('.done-rename').hide();
+				$('.cancel-rename').hide();
+
+				$('#instruction-txt').text(instruction);
+				$('.imgPreview').css("background-image", "url(" + imgUrl + ")");
+				if (imgUrl) {
+					$('.imgicn').hide();
+				} else {
+					$('.imgicn').show();
+				}
+			}
+
+			if ($('.setting-btn').prop('contenteditable') === 'true'){
+				$('.setting-btn').addClass('dropdown-toggle');
+				$('.setting-btn').prop('contenteditable', false);
+				$('.setting-btn').attr('data-toggle', 'dropdown');
+				$('.setting-btn').css('cursor', 'pointer');
+				$('.rename-set').show();
+				$('.done-rename').hide();
+				$('.cancel-rename').hide();
+				$(".settingdropdown .dropdown-menu").removeAttr('style');
+			}
+
+			if (items && items.data && isMultiple) {
+					$('#list-items').empty();
+					$('#choices-list-item').val("");
+					$('.samepoint').val("");
+					$('.differentpoint').val("");
+					$('#list-items').append("<table border='1' class='table listtable'>");
+					$('.listtable').append("<tr><th style='width:62%'></th>" +
+						"<th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is same'>Same</a></th>" +
+						"<th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is different'>Different</a></th>" +
+						"<th style='width:8%'></th></tr>");
+					$.each(items.data, function (i, item) {
+						$('.listtable').append("<tr><td hidden> <span class='opid' style='width:0%'> " + item.id + "</span></td>" +
+							"<td> <span class='op' style='width:100%'> " + item.choices_id__title + "</span></td>" +
+							"<td> <span style='width:100%'> " + item.samepoint + "</span></td>" +
+							"<td> <span style='width:100%'> " + item.differentpoint + "</span></td>" +
+							"<td> <span style='width:100%'> <a class='remove' style='color:#c96f4d'><i class='far fa-times-circle'></i></a></span></td></tr>");
+						// localStorage.setItem('listItems', $('#list-items').html());
+
+					});
+					$('.listtable').append('</table>');
+			}
+
+			$.ajax({
+				url: URL + "settingshow",
+				type: "POST",
+				headers: { "X-CSRFToken": getCookie("csrftoken") },
+			}).done(function (data) {
+				data = JSON.parse(data);
+				var $othersets = $('.othersettings');
+				var settext = $('.setting-btn').attr('selectedval');
+				var setlist = [];
+				if ($othersets.length == 0){
+					$.each(data, function (i, item) {
+						setlist.push(i);
+						if (i !== settext){
+							$('.settingdropdownoptions').append("<a class='dropdown-item othersettings' href='#'>" + i + "</a>")
+						}
+
+						var optionshtml = '<table class="table listtable">';
+						optionshtml = optionshtml.concat("<tr><th style='width:62%'></th>" +
+									"<th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is same'>Same</a></th>" +
+									"<th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is different'>Different</a></th>" +
+									"<th style='width:8%'></th></tr>");
+
+						$.each(item[0], function (i, ob) {
+							optionshtml = optionshtml.concat("<tr><td hidden> <span class='opid' style='width:0%'> " + ob.id + "</span></td>" +
+										"<td> <span class='op' style='width:100%'> " + ob.choices_id__title + "</span></td>" +
+										"<td> <span style='width:100%'> " + ob.samepoint + "</span></td>" +
+										"<td> <span style='width:100%'> " + ob.differentpoint + "</span></td>" +
+										"<td> <span style='width:100%'> <a class='remove' style='color:#c96f4d'><i class='far fa-times-circle'></i></a></span></td></tr>");
+							});
+
+						optionshtml = optionshtml.concat('</table>');
+						var store = {};
+						store['table'] = optionshtml;
+						store['ins'] = item[1];
+						store['set'] = item[2];
+						store['rand'] = item[3];
+						store['aud'] = item[4];
+						store['sco'] = item[5];
+						localStorage.setItem(i, JSON.stringify(store));
+					});
+					localStorage.setItem('setlist', setlist);
+				}
+
+			});
+
+		});
+
+
+		$('.add').click(function (event) {
+			event.preventDefault();
+			$('.errordiv').css('display', 'none');
+			var multiplecheck = $('#multiplecheck').prop('checked');
+			var choicestxt = $('#choices-list-item').val();
+			var instructiontxt = $('#instruction-txt').val();
+			var samepoint = $('.samepoint').val();
+			var differentpoint = $('.differentpoint').val();
+			var set = $('.setting-btn').attr('selectedval');
+			var tempdata = localStorage.getItem('temp');
+			var storeData = (tempdata) ? JSON.parse(tempdata) : [];
+			var storeObj = {};
+			if (!set) {
+				$('.errortxt').text('Please select a setting');
+				$('.errordiv').css('display', 'block');
+				$("#settingModal").scrollTop(1000);
+				return;
+			}
+
+			if (!choicestxt || !samepoint || !differentpoint) {
+				$('.errortxt').text("Required field can't be empty");
+				$('.errordiv').css('display', 'block');
+				$("#settingModal").scrollTop(1000);
+				return;
+			}
+
+			if (choicestxt && samepoint && differentpoint && multiplecheck) {
+
+				storeObj ['name'] = choicestxt;
+				storeObj ['samepoint'] = samepoint;
+				storeObj ['differentpoint'] = differentpoint;
+				storeObj ['checked'] = 'checked';
+				storeData.push(storeObj);
+				localStorage.setItem('temp', JSON.stringify(storeData));
+
+				$.ajax({
+					url: URL + "addoptions",
+					type: "POST",
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					data: {
+						choicestxt: choicestxt,
+						samepoint: samepoint,
+						differentpoint: differentpoint,
+						multiplecheck: multiplecheck,
+						addop : JSON.stringify(storeData),
+					}
+				}).done(function (data) {
+					if (data == "success") {
+						// $('#list-items').append("<li> " + choicestxt + "<a class='remove' style='color:#c96f4d'><i class='far fa-times-circle'></i></a><hr></li>");
+						var $listtable = $('.listtable');
+						if ($listtable.length == 0){
+							$('#list-items').append("<table border='1' class='table listtable'>");
+							$('.listtable').append("<tr><th style='width:62%'></th>" +
+								"<th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is same'>Same</a></th>" +
+								"<th style='width:20%'><a data-toggle='tooltip' data-placement='top' title='Points when ground truth is different'>Different</a></th>" +
+								"<th style='width:8%'></th></tr>");
+						}
+						$('.listtable').append("<tr><td> <span style='width:100%'> " + choicestxt + "</span></td>" +
+							"<td> <span style='width:100%'> " + samepoint + "</span></td>" +
+							"<td> <span style='width:100%'> " + differentpoint + "</span></td>" +
+							"<td> <span style='width:100%'> <a class='remove' style='color:#c96f4d'><i class='far fa-times-circle'></i></a></span></td></tr>");
+
+						if ($listtable.length == 0){
+							$('.listtable').append('</table>');
+						}
+						$('#choices-list-item').val("");
+						$('.samepoint').val("");
+						$('.differentpoint').val("");
+
+					} else {
+						$('.errortxt').text("Save failed!");
+						$('.errordiv').css('display', 'block');
+						$("#settingModal").scrollTop(1000);
+					}
+				});
+			}
+
+
+		});
+
+
+
+		$(document).on('click', '.remove', function () {
+
+			//   localStorage.setItem('listItems', $('#list-items').html());
+			var multiplecheck = $('#multiplecheck').prop('checked');
+			var deleteoption = $(this).parent().closest('tr').find(".op").text();
+
+			if (deleteoption && multiplecheck){
+				var opid = $(this).parent().closest('tr').find(".opid").text();
+				$.ajax({
+					url: URL + "deletechoice",
+					type: "POST",
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					data: {
+						multiplecheck: multiplecheck,
+						deleteoption: deleteoption,
+						opid: opid,
+					}
+				}).done(function (data) {
+					if (data == "success") {
+						console.log(data + 'option deleted');
+					} else {
+						console.log(data);
+					}
+				});
+			}
+
+			var isHeader = ($(this).parent().closest('tr').siblings().length == 1)
+			$(this).parent().closest('tr').remove();
+			if (isHeader){
+				$(".listtable").remove();
+			}
+
+		});
+
+		function loadimage(){
+			if ($('.uploadImage')[0].files.length > 0) {
+				var file = $('.uploadImage')[0].files[0];
+				var fileType = file["type"];
+				var validImageTypes = ["image/gif", "image/jpeg", "image/png"];
+
+				if ($.inArray(fileType, validImageTypes) > -1) {
+					uploadfile = file;
+					var reader = new FileReader();
+					reader.readAsDataURL(file);
+
+					reader.onloadend = function (e) {
+						$('.imgPreview').css("background-image", "url(" + e.target.result + ")");
+						$('.imgicn').hide();
+					}
+				}
+			}
+		}
+
+		function getCookie(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie != '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+					var cookie = jQuery.trim(cookies[i]);
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) == (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+
+		function convertToFile(url) {
+			var blob = null
+			var file = null
+			var xhr = new XMLHttpRequest()
+			xhr.open("GET", url, true)
+			xhr.responseType = "blob"
+			xhr.onload = function()
+			{
+				blob = xhr.response
+				file = new File([blob], blob)
+				return file
+			}
+			xhr.send()
+		}
+
+		function setGradiantProperty(x) {
+			root.style.setProperty("--gradiantcolor", 'linear-gradient(90deg, ' + theme.progress_theme + ' ' + x + '%, #b1a9a9 ' + x + '%)');
+		}
+
+		function setlife() {
+			if (lifecount > 0){
+				lifecount -= 1;
+				failcount += 1;
+				$('#life'+lifecount).removeClass('fa-heart').addClass('fa-heart-broken');
+				$.ajax({
+					url: URL + "savelife",
+					type: "POST",
+					data: {
+						life: lifecount,
+						fail: failcount,
+					},
+					tryCount: 0,
+					retryLimit: 10,
+					tryCount2: 0,
+					retryLimit2: 3,
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					success:function(data){
+						 if (data == "success") {
+						 	setTimeout(function () {
+								location.reload();
+							}, 400);
+						 }
+					},
+					error: function(xhr, txtStatus, errorThrown){
+						if (txtStatus == 'error' && xhr.status == 0){
+							this.tryCount++;
+							if (this.tryCount <= this.retryLimit){
+								$.ajax(this);
+								return;
+							}
+						} else {
+							this.tryCount2++;
+							if (this.tryCount2 <= this.retryLimit2){
+								$.ajax(this);
+								return;
+							}
+						}
+					}
+				})
+			}
+
+		}
+
+
+	</script>
+	<script src="{% static 'js/main.min.js' %}?v=1.2"></script>
+{% endcompress %}
+</body>
+
+</html>

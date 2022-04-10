@@ -1,0 +1,26 @@
+{% load static %}
+<div id="levelsuccessModal" class="modal" data-backdrop="static" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content {{theme.bg}}">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title font-weight-bold text-center">Congratualtions!</h4>
+
+                </div>
+        
+                <div class="modal-body ">
+                    <h5 class="text-center levelmsg">Level Complete</h5>
+                    <div class="stardiv text-center">
+                        <img class="star" src="{% static 'images/star.png' %}"/>
+                    </div>
+                    <h5 class="text-center completelv"></h5>
+                    <div>
+                        <button type="button" class="btn {{theme.button_primary}} btn-block btn-lg continuebtn">Continue</button>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                       
+                </div>
+            </div>
+        </div>
+    </div>

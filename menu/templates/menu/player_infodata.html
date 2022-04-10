@@ -1,0 +1,90 @@
+{% load static %}
+<div id="infodataModal" class="modal" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content {{theme.bg}}">
+            <div class="modal-header text-center">
+                <h4 class="modal-title font-weight-bold text-center">General Information</h4>
+
+            </div>
+
+            <div class="modal-body ">
+                <h6 class="text-center infolabel">Please fill in the following form to help us understand you better. Please note that all fields are mandatory.</h6>
+                <div class="form-group">
+                    <label for="infoexperience"> <h6> Have you ever been involved in voice comparison task before? If yes, how much would you rate your skill: basic, mid or advanced(expert)? </h6></label>
+                    <input class="form-control input-lg" type="text" maxlength="100" name="infoexperience" id="infoexperience" placeholder="" required="required">
+                </div>
+
+                <div class="form-group">
+
+                    <label for="infolanguage"><h6> Which spoken languages you can understand?  </h6></label>
+                    <input class="form-control input-lg" type="text" maxlength="100" id="infolanguage" name="infolanguage" placeholder="" required="required">
+                </div>
+
+                <div class="form-group">
+
+                    <label for="infodisability"><h6> Have you been diagnosed with a hearing problem or do you use hearing aid? </h6></label>
+                    <input class="form-control input-lg" type="text" maxlength="100" id="infodisability" name="infodisability" placeholder="">
+                </div>
+
+                <div class="form-group">
+
+                    <label for="infospeaker"><h6> Are you using headphones/earphones or loudspeakers? </h6></label>
+                    <input class="form-control input-lg" type="text" maxlength="100" id="infospeaker" name="infospeaker" placeholder="">
+                </div>
+
+                <div class="form-group">
+
+                    <label for="infobackground"><h6> Are you in silent environment or is there some background noises? </h6></label>
+                    <input class="form-control input-lg" type="text" maxlength="100" id="infobackground" name="infobackground" placeholder="">
+                </div>
+
+                <div class="form-group">
+
+                    <label for="infodevice"><h6> Which device are you using to play the game: laptop, mobile or any other? </h6></label>
+                    <input class="form-control input-lg" type="text" maxlength="100" id="infodevice" name="infodevice" placeholder="">
+                </div>
+
+                <h5 class="text-center"></h5>
+
+                 <div class="text-center annot">
+                    Thank you for taking part in this research.
+                    Your participation is fully voluntary.
+                    The purpose of processing your personal data is for evaluating human perception in voice recognition which might be affected by some personal attributes.
+                    The legal basis for the processing of personal data is scientific research in the public interest.
+                    Your personal data will not be transferred to other parties or outside Europe.
+                    Participation is voluntary and your personal data will not be collected from any other sources.
+                    No automatic decisions or profiling will be made based on your personal data.
+                    You can find more information about your rights as a data subject <a href="https://tietosuoja.fi/en/know-your-rights" target="_blank">here</a>.
+                    You can exercise your rights by contacting the controller.
+                </div>
+
+                <div class="text-center annot">
+                    Disclaimer:
+                    The role play scenario in the game is fictional. The audio clips used in the game are not related to any real bank customer.
+                </div>
+
+                <div class="text-center annot">
+                    Do you provide us your consent to collect data for research and educational purposes?
+                </div>
+
+                <div class="form-check text-center">
+                    <input class="form-check-input" type="checkbox" value="" id="consentCheckBox"> &nbsp;
+                    <label class="form-check-label text-center" for="consentCheckBox">
+                        I consent
+                    </label>
+                </div>
+
+
+
+                <h5 class="text-center"></h5>
+                <div>
+                    <button type="button" class="btn {{theme.button_primary}} btn-block btn-lg submitinfo" disabled="true">Submit</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>

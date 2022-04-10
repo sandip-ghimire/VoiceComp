@@ -1,0 +1,5 @@
+Django~=2.2.4
+django_compressor
+numpy
+Pillow
+django-htmlmin

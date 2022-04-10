@@ -1,0 +1,10 @@
+*.pyc
+*~
+/.vscode
+__pycache__
+projenv
+db.sqlite3
+/static
+.DS_Store
+settings.py
+**/migrations/*

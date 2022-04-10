@@ -1,0 +1,121 @@
+
+<div id="workerVerifyModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content {{theme.bg}}">
+            <div class="modal-header text-center">
+                <h4 class="modal-title font-weight-bold">Verify Worker</h4>
+                <button type="button" class="modal-title close" data-dismiss="modal" aria-label="Close">
+                    <span style="color:{{theme.cross_back}}">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+                </button>
+            </div>
+
+            <div class="modal-body ">
+               <div class="container-fluid">
+
+                    <div class="add-items input-group">
+                        <div class="form-group row">
+                            <div class="col-md-5" style="padding-left:0">
+                                <label class="form-check-label" for="wtoken">Token</label>
+                                <input type="text" class="form-control worker-token" id="wtoken" name="wtoken" placeholder="Token" style="width:100%">
+                            </div>
+
+                            <div class="col-md-5" style="padding-left:0">
+                                <label class="form-check-label" for="mturkwid">Worker Id</label>
+                                <input type="text" class="form-control mturk-worker-id" id="mturkwid" name="mturkwid" placeholder="Worker id" style="width:100%">
+                            </div>
+
+                            <div class="col-md-2" style="padding-left:0">
+                                <div class="input-group-append" title="Check validity" style="margin-top:20px">
+                                    <button type="button" class="btn {{theme.button_primary}} checkvalidity">Check</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+               </div>
+                <br>
+
+                <div class="container-fluid tokeninfo" style="font-size:15px">
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="storedwid">Worker id in record</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control stored-worker-id" id="storedwid" name="storedwid" placeholder="" style="width:100%" readonly>
+                        </div>
+                        <i class="fas fa-check verifyworker col-2" style="display:none"></i>
+                        <i class="fas fa-times unverifiedworker col-2" style="display:none"></i>
+                    </div>
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="wscore">Score when token generated</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control worker-score" id="wscore" name="wscore" placeholder="" style="width:100%" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="timespent">Total time spent when token generated</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control total-time-spent" id="timespent" name="timespent" placeholder="" style="width:100%" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="ttotaltrials">Total HITs when token generated</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control t-total-trials" id="ttotaltrials" name="ttotaltrials" placeholder="" style="width:100%" readonly>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="container-fluid workeridinfo" style="font-size:15px">
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="scorebywid">Latest score by worker id</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control worker-score" id="scorebywid" name="scorebywid" placeholder="" style="width:100%" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="timespentbywid">Total time spent by worker id</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control total-time-spent" id="timespentbywid" name="timespentbywid" placeholder="" style="width:100%" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                       <label class="form-check-label col-4" for="wtotaltrials">Total HITs by worker id</label>
+                        <div class="col-6">
+                          <input type="text" class="form-control w-total-trials" id="wtotaltrials" name="wtotaltrials" placeholder="" style="width:100%" readonly>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="container-fluid clearfieldsbtn">
+                     <div class="input-group-append" title="Clear all fields" style="margin-top:20px; float:right">
+                        <button type="button" class="btn {{theme.button_primary}} clearbtn">Clear</button>
+                    </div>
+                </div>
+
+            </div>
+
+             <div class="modal-footer">
+                    <div class='mtverifyerrdiv'>
+                            <hr>
+                            <h6 class='mtverifyerr'></h6>
+                    </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
